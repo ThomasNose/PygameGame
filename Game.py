@@ -10,7 +10,7 @@ from settings import *
 from sprites import *
 from os import path
 
-music = ['Medium.ogg','Dummy.ogg','CORE.ogg','Oi_Nah.mp3']
+music = ['Medium.ogg','Dummy.ogg','CORE.ogg','Hopes_Dreams.ogg']
 
 
 class Game:
