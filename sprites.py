@@ -38,17 +38,17 @@ class Player(pg.sprite.Sprite):
                                 self.game.spritesheet.get_image(690,  406, 120, 201)]
         self.terrain = [self.game.spritesheet.get_image(0,288,380,94)]
         for frame in self.standing_frames:
-            frame.set_colorkey(BLACK)
+            frame.set_colorkey(WHITE)
         self.walk_frames_right = [self.game.spritesheet.get_image(678,  860, 120, 201),
                                   self.game.spritesheet.get_image(692,  1458, 120, 207)]
         for frame in self.walk_frames_right:
-            frame.set_colorkey(BLACK)
+            frame.set_colorkey(WHITE)
         self.walk_frames_left = []
         for frame in self.walk_frames_right:
-            frame.set_colorkey(BLACK)
+            frame.set_colorkey(WHITE)
             self.walk_frames_left.append(pg.transform.flip(frame, True, False))
         self.jump_frame = self.game.spritesheet.get_image(382, 763, 150, 181)
-        self.jump_frame.set_colorkey(BLACK)
+        self.jump_frame.set_colorkey(WHITE)
 
     def jump_cut(self):
         if self.jumping:
@@ -126,7 +126,7 @@ class Platform(pg.sprite.Sprite):
         self.game = game
         image = self.game.spritesheet.get_image(0, 288, 380, 94)
         self.image = image
-        self.image.set_colorkey(BLACK)
+        self.image.set_colorkey(WHITE)
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y

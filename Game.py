@@ -4,10 +4,14 @@
 
 
 import pygame as pg
+import numpy as np
 import random
 from settings import *
 from sprites import *
 from os import path
+
+music = ['Medium.ogg','Dummy.ogg','CORE.ogg','Oi_Nah.mp3']
+
 
 class Game:
 
@@ -46,24 +50,27 @@ class Game:
         self.platforms = pg.sprite.Group()
         self.player=Player(self)
         self.all_sprites.add(self.player)
+
+        # Adding in platforms
         for plat in PLATFORM_LIST:
             p = Platform(self, *plat)
             self.all_sprites.add(p)
             self.platforms.add(p)
+
+        # Initial music setup
         pg.mixer.music.set_volume(0.5)
-        pg.mixer.music.load(path.join(self.sound_dir, 'Medium.ogg'))
+        pg.mixer.music.load(path.join(self.sound_dir, np.random.choice(music)))
         self.run()
     
     def run(self):
         # Game Loop
-        pg.mixer.music.play(loops=-1)
         self.playing=True
         while self.playing:
             self.clock.tick(FPS)
             self.events()
             self.update()
             self.draw()
-        pg.mixer.music.fadeout(500)
+
             
     
     def update(self):
@@ -78,27 +85,35 @@ class Game:
                     if hit.rect.bottom > lowest.rect.bottom:
                         lowest = hit
                 # Falling off platform if foot not touching
-                if self.player.pos.x < lowest.rect.right + 15 and \
-                   self.player.pos.x > lowest.rect.left - 15:
+                if self.player.pos.x <= lowest.rect.right + 100 and \
+                   self.player.pos.x >= lowest.rect.left - 100:
                     if self.player.pos.y < hits[0].rect.bottom:
                         self.player.pos.y=lowest.rect.top+1
                         self.player.vel.y=0
                         self.player.jumping=False
 
-                    
+
+
+
+        # Random music
+        if pg.mixer.music.get_busy() == False:
+            pg.mixer.music.load(path.join(self.sound_dir, np.random.choice(music)))
+            pg.mixer.music.play(loops=1)
+
+        
         # Check player location (scrolling)
         if self.player.rect.right >= 4 * WIDTH / 7:
             self.player.pos.x -= max(abs(self.player.vel.x),2)
             for plat in self.platforms:
                 plat.rect.right -= max(abs(self.player.vel.x),2)
                 self.score +=1
-        # Going left
+        # Going left (comment out to only scroll right)
         #if self.player.rect.left <= WIDTH / 3:
-            #self.player.pos.x += max(abs(self.player.vel.x),2)
-            #for plat in self.platforms:
-                #plat.rect.left += max(abs(self.player.vel.x),2)
+        #    self.player.pos.x += max(abs(self.player.vel.x),2)
+        #    for plat in self.platforms:
+        #        plat.rect.left += max(abs(self.player.vel.x),2)
 
-        # Stop going left
+        # Stop going left (uncomment to place "invisible wall")
         if self.player.rect.left <= WIDTH/20:
             self.player.pos.x += max(abs(self.player.vel.x),2)
         
@@ -117,7 +132,7 @@ class Game:
                     self.playing=False
                 self.running=False
             if event.type == pg.KEYDOWN:
-                if event.key == pg.K_UP:
+                if event.key == pg.K_UP and self.player.vel.y == 0:
                     self.player.jump()
             if event.type == pg.KEYUP:
                 if event.key == pg.K_UP:
