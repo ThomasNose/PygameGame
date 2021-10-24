@@ -11,7 +11,7 @@ from sprites import *
 from os import path
 
 music = ['Medium.ogg','Dummy.ogg','CORE.ogg','Hopes_Dreams.ogg']
-
+music_ind = np.random.randint(1,len(music))
 
 class Game:
 
@@ -59,7 +59,16 @@ class Game:
 
         # Initial music setup
         pg.mixer.music.set_volume(0.5)
-        pg.mixer.music.load(path.join(self.sound_dir, np.random.choice(music)))
+        #A = np.random.randint(0,4)
+        #music_ind = A
+        #pg.mixer.music.load(path.join(self.sound_dir, music[music_ind]))
+        
+        global music_ind
+        B = music_ind
+        pg.mixer.music.load(path.join(self.sound_dir, music[B]))
+        pg.mixer.music.play(loops=1)
+        music_ind = B
+        
         self.run()
     
     def run(self):
@@ -96,9 +105,17 @@ class Game:
 
 
         # Random music
-        if pg.mixer.music.get_busy() == False:
-            pg.mixer.music.load(path.join(self.sound_dir, np.random.choice(music)))
-            pg.mixer.music.play(loops=1)
+        while pg.mixer.music.get_busy() == False:
+            global music_ind
+            A = 0
+            B = np.random.randint(0,4)
+            if B == A:
+                B = np.random.randint(0,4)
+            if B !=A:
+                pg.mixer.music.load(path.join(self.sound_dir, music[B]))
+                pg.mixer.music.play(loops=0)
+                A = B
+
 
         
         # Check player location (scrolling)
@@ -114,7 +131,7 @@ class Game:
         #        plat.rect.left += max(abs(self.player.vel.x),2)
 
         # Stop going left (uncomment to place "invisible wall")
-        if self.player.rect.left <= WIDTH/20:
+        if self.player.rect.left <= WIDTH/200:
             self.player.pos.x += max(abs(self.player.vel.x),2)
         
         # Dying (by falling)
@@ -137,6 +154,7 @@ class Game:
             if event.type == pg.KEYUP:
                 if event.key == pg.K_UP:
                     self.player.jump_cut()
+
 
                                        
 
