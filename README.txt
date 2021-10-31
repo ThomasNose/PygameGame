@@ -4,3 +4,5 @@ The game will eventually have boss battles, obstacles, puzzles, items, collectab
 
 Currently I plan to call this "late to lecture" which basically sums up the game.
 This current version is likely to be scrapped but offers a dumbed down sneak peak at what I hope to make it.
+
+Packages required to run the game via Python - Pygame 2.0.2 and 1.19.2 (later and earlier versions may work, I'm not entirely sure how far forward and backwards you can go though).
