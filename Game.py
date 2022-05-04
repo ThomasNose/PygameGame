@@ -11,10 +11,9 @@ from sprites import *
 from os import path
 
 music = ['Medium.ogg','Dummy.ogg','CORE.ogg','Hopes_Dreams.ogg']
-music_ind = np.random.randint(1,len(music))
+#music_ind = np.random.randint(1,len(music))
 
 class Game:
-
     def __init__(self):
         # initialise game window, etc
         # Game is running
@@ -57,17 +56,18 @@ class Game:
             self.all_sprites.add(p)
             self.platforms.add(p)
 
-        # Initial music setup
-        pg.mixer.music.set_volume(0.5)
-        #A = np.random.randint(0,4)
-        #music_ind = A
-        #pg.mixer.music.load(path.join(self.sound_dir, music[music_ind]))
-        
-        global music_ind
-        B = music_ind
-        pg.mixer.music.load(path.join(self.sound_dir, music[B]))
-        pg.mixer.music.play(loops=1)
-        music_ind = B
+        # Initial music setup + initial song
+        pg.mixer.music.set_volume(0.5)      
+        pg.mixer.music.stop()
+        #while pg.mixer.music.get_busy() == False:
+        #    B = np.random.randint(0,4)
+        #    #print(A,B)
+        #    if B != A:
+        #        pg.mixer.music.load(path.join(self.sound_dir, music[B]))
+        #        pg.mixer.music.play(loops=0)
+        #        print(str(A) + " is not equal to " + str(B))
+        #        A = B
+        #        print(A)
         
         self.run()
     
@@ -77,12 +77,11 @@ class Game:
         while self.playing:
             self.clock.tick(FPS)
             self.events()
-            self.update()
+            self.update(A)
             self.draw()
 
             
-    
-    def update(self):
+    def update(self,A):
         # Game Loop - Update
         self.all_sprites.update()
         # check if player hits a platform - only if falling
@@ -106,16 +105,16 @@ class Game:
 
         # Random music
         while pg.mixer.music.get_busy() == False:
-            global music_ind
-            A = 0
             B = np.random.randint(0,4)
-            if B == A:
-                B = np.random.randint(0,4)
-            if B !=A:
+            print(A,B)
+            if B != A[-1] and B != A[-2]: #and B != A[-3]: # This basically means 3 different
+                                          #songs will play in a row, , could extend to all 4
+                                          #but no point running random more times.
                 pg.mixer.music.load(path.join(self.sound_dir, music[B]))
                 pg.mixer.music.play(loops=0)
-                A = B
-
+                A.append(B)
+                print(A)
+                return(B)
 
         
         # Check player location (scrolling)
@@ -195,8 +194,10 @@ class Game:
         self.draw_text(("Your score: ") + str(self.score), 16, WHITE, WIDTH/2,HEIGHT/3)
 
         # Game over music
-        pg.mixer.music.load(path.join(self.sound_dir, 'Determination.ogg'))
-        pg.mixer.music.play(loops=1)
+        #A = B
+        pg.mixer.music.stop()
+        #pg.mixer.music.load(path.join(self.sound_dir, 'Determination.ogg'))
+        #pg.mixer.music.play(loops=1)
 
         pg.display.flip()
         self.wait_for_key()
@@ -220,13 +221,13 @@ class Game:
         text_rect = text_surface.get_rect()
         text_rect.midtop = (x, y)
         self.screen.blit(text_surface, text_rect)
-        
 
+
+A = [50]
 g = Game()
 g.show_start_screen()
 while g.running:
     g.new()
     #game over screen
     g.show_go_screen()
-
 pg.quit()
